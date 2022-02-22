@@ -12,6 +12,6 @@ Run App.java
 
 Control movement of the tank via left and right arrow key, shoot the invaders by clicking space bar.
 
-<img title="demo" alt="demo" src="./sample1.png">
-<img title="demo" alt="demo" src="./sample2.png">
-<img title="demo" alt="demo" src="./sample3.png">
+<img title="demo0" src="./sample1.png">
+<img title="demo1" src="./sample2.png">
+<img title="demo2" src="./sample3.png">

@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">asm2</a> &gt; <a href="index.source.html" class="el_package">invadem</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">package invadem;
+import processing.core.*;
+import java.util.*;
+public class App extends PApplet {
+
+    //define PImages
+    protected PImage tankImg;
+    protected PImage invaderImg;
+    protected PImage downImg;
+    protected PImage projectileImg;
+    //additional invader imgs
+    protected PImage powerInvaderRegImg;
+    protected PImage powerInvaderDownImg;
+    protected PImage armouredInvaderRegImg;
+    protected PImage armouredInvaderDownImg;
+    //additional projectile img
+    protected PImage projectileLongImg;
+
+    protected PImage empty;
+    protected PImage left1;
+    protected PImage left2;
+    protected PImage left3;
+    protected PImage right1;
+    protected PImage right2;
+    protected PImage right3;
+    protected PImage top1;
+    protected PImage top2;
+    protected PImage top3;
+    protected PImage solid1;
+    protected PImage solid2;
+    protected PImage solid3;
+    protected PImage nextLevel;
+    protected PImage gameOver;
+    protected PImage background;
+    //additional font
+    protected PFont font;
+    //define barriers imgs
+<span class="fc" id="L38">    protected List&lt;PImage&gt; barrierSolid = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L39">    protected List&lt;PImage&gt; barrierLeft = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L40">    protected List&lt;PImage&gt; barrierTop = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L41">    protected List&lt;PImage&gt; barrierRight = new ArrayList&lt;&gt;();</span>
+    //define entities
+<span class="fc" id="L43">    protected Invader[][] invadersPrint = new Invader[4][10];//invaders</span>
+<span class="fc" id="L44">    protected List&lt;Projectile&gt; fires = new ArrayList&lt;Projectile&gt;();//projectiles list</span>
+    protected Tank tank;//tank
+    protected Projectile projectile;//projectile
+<span class="fc" id="L47">    protected Barrier[][] barriers = new Barrier[3][7];//barrier array</span>
+    //define booleans
+<span class="fc" id="L49">    protected boolean isMovingLeft = false;</span>
+<span class="fc" id="L50">    protected boolean isMovingRight = false;</span>
+<span class="fc" id="L51">    protected boolean hasFired = false;</span>
+<span class="fc" id="L52">    protected boolean invaderLeft = true;</span>
+<span class="fc" id="L53">    protected boolean invaderRight = false;</span>
+    protected boolean invaderMove;
+<span class="fc" id="L55">    protected boolean invaderDown = false;</span>
+<span class="fc" id="L56">    protected boolean newLevel = false;</span>
+    //default value = 0, if wins, value = 1, if fails, value = 2
+<span class="fc" id="L58">    protected int checkIfFinish = 0;</span>
+    //others
+<span class="fc" id="L60">    protected int currentMove = 0;//check if the invaders can move</span>
+<span class="fc" id="L61">    protected int drawTime = 0;//check how many frames</span>
+<span class="fc" id="L62">    protected int fireRate = 300;</span>
+<span class="fc" id="L63">    protected int currentLevel = 1;//define real level</span>
+<span class="fc" id="L64">    protected int death = 0;</span>
+    //additional scores
+<span class="fc" id="L66">    protected int defaultScore = 10000;//define default high score</span>
+<span class="fc" id="L67">    protected int currentScore = 0;//define current score</span>
+
+<span class="fc" id="L69">    public App() {</span>
+        //Set up your objects
+<span class="fc" id="L71">    }</span>
+
+    public void setup() {
+        //default frame
+<span class="fc" id="L75">        frameRate(60);</span>
+        //import game over &amp;&amp; next level
+<span class="fc" id="L77">        nextLevel = loadImage(&quot;nextlevel.png&quot;);</span>
+<span class="fc" id="L78">        gameOver = loadImage(&quot;gameover.png&quot;);</span>
+        //load imgs to barrierlists
+<span class="fc" id="L80">        left1 = loadImage(&quot;barrier_left1.png&quot;);</span>
+<span class="fc" id="L81">        left2 = loadImage(&quot;barrier_left2.png&quot;);</span>
+<span class="fc" id="L82">        left3 = loadImage(&quot;barrier_left3.png&quot;);</span>
+<span class="fc" id="L83">        right1 = loadImage(&quot;barrier_right1.png&quot;);</span>
+<span class="fc" id="L84">        right2 = loadImage(&quot;barrier_right2.png&quot;);</span>
+<span class="fc" id="L85">        right3 = loadImage(&quot;barrier_right3.png&quot;);</span>
+<span class="fc" id="L86">        top1 = loadImage(&quot;barrier_top1.png&quot;);</span>
+<span class="fc" id="L87">        top2 = loadImage(&quot;barrier_top2.png&quot;);</span>
+<span class="fc" id="L88">        top3 = loadImage(&quot;barrier_top3.png&quot;);</span>
+<span class="fc" id="L89">        solid1 = loadImage(&quot;barrier_solid1.png&quot;);</span>
+<span class="fc" id="L90">        solid2 = loadImage(&quot;barrier_solid2.png&quot;);</span>
+<span class="fc" id="L91">        solid3 = loadImage(&quot;barrier_solid3.png&quot;);</span>
+<span class="fc" id="L92">        background = loadImage(&quot;timg.jpeg&quot;);//reference from www.photophoto.com</span>
+        //additional imgs
+<span class="fc" id="L94">        powerInvaderDownImg = loadImage(&quot;invader2_power.png&quot;);</span>
+<span class="fc" id="L95">        powerInvaderRegImg = loadImage(&quot;invader1_power.png&quot;);</span>
+<span class="fc" id="L96">        armouredInvaderRegImg = loadImage(&quot;invader1_armoured.png&quot;);</span>
+<span class="fc" id="L97">        armouredInvaderDownImg = loadImage(&quot;invader2_armoured.png&quot;);</span>
+<span class="fc" id="L98">        projectileLongImg = loadImage(&quot;projectile_lg.png&quot;);</span>
+        //additional font
+<span class="fc" id="L100">        font = createFont(&quot;PressStart2P-Regular.ttf&quot;,10);</span>
+<span class="fc" id="L101">        textFont(font);</span>
+<span class="fc" id="L102">        this.empty = loadImage(&quot;empty.png&quot;);</span>
+
+        //put images in the list of barriers image
+<span class="fc" id="L105">        barrierSolid.add(solid1);</span>
+<span class="fc" id="L106">        barrierSolid.add(solid2);</span>
+<span class="fc" id="L107">        barrierSolid.add(solid3);</span>
+<span class="fc" id="L108">        barrierSolid.add(empty);</span>
+<span class="fc" id="L109">        barrierTop.add(top1);</span>
+<span class="fc" id="L110">        barrierTop.add(top2);</span>
+<span class="fc" id="L111">        barrierTop.add(top3);</span>
+<span class="fc" id="L112">        barrierTop.add(empty);</span>
+<span class="fc" id="L113">        barrierLeft.add(left1);</span>
+<span class="fc" id="L114">        barrierLeft.add(left2);</span>
+<span class="fc" id="L115">        barrierLeft.add(left3);</span>
+<span class="fc" id="L116">        barrierLeft.add(empty);</span>
+<span class="fc" id="L117">        barrierRight.add(right1);</span>
+<span class="fc" id="L118">        barrierRight.add(right2);</span>
+<span class="fc" id="L119">        barrierRight.add(right3);</span>
+<span class="fc" id="L120">        barrierRight.add(empty);</span>
+        //set barriers1
+<span class="fc" id="L122">        barriers[0][0] = new Barrier(barrierSolid,190,344);</span>
+<span class="fc" id="L123">        barriers[0][1] = new Barrier(barrierSolid,190,336);</span>
+<span class="fc" id="L124">        barriers[0][2] = new Barrier(barrierLeft,190,328);</span>
+<span class="fc" id="L125">        barriers[0][3] = new Barrier(barrierTop,198,328);</span>
+<span class="fc" id="L126">        barriers[0][4] = new Barrier(barrierRight,206,328);</span>
+<span class="fc" id="L127">        barriers[0][5] = new Barrier(barrierSolid,206,336);</span>
+<span class="fc" id="L128">        barriers[0][6] = new Barrier(barrierSolid,206,344);</span>
+        //set barriers2
+<span class="fc" id="L130">        barriers[1][0] = new Barrier(barrierSolid,312,344);</span>
+<span class="fc" id="L131">        barriers[1][1] = new Barrier(barrierSolid,312,336);</span>
+<span class="fc" id="L132">        barriers[1][2] = new Barrier(barrierLeft,312,328);</span>
+<span class="fc" id="L133">        barriers[1][3] = new Barrier(barrierTop,320,328);</span>
+<span class="fc" id="L134">        barriers[1][4] = new Barrier(barrierRight,328,328);</span>
+<span class="fc" id="L135">        barriers[1][5] = new Barrier(barrierSolid,328,336);</span>
+<span class="fc" id="L136">        barriers[1][6] = new Barrier(barrierSolid,328,344);</span>
+        //set barriers3
+<span class="fc" id="L138">        barriers[2][0] = new Barrier(barrierSolid,440,344);</span>
+<span class="fc" id="L139">        barriers[2][1] = new Barrier(barrierSolid,440,336);</span>
+<span class="fc" id="L140">        barriers[2][2] = new Barrier(barrierLeft,440,328);</span>
+<span class="fc" id="L141">        barriers[2][3] = new Barrier(barrierTop,448,328);</span>
+<span class="fc" id="L142">        barriers[2][4] = new Barrier(barrierRight,456,328);</span>
+<span class="fc" id="L143">        barriers[2][5] = new Barrier(barrierSolid,456,336);</span>
+<span class="fc" id="L144">        barriers[2][6] = new Barrier(barrierSolid,456,344);</span>
+        //music
+
+        //set up tank
+<span class="fc" id="L148">        this.tankImg = loadImage(&quot;tank1.png&quot;);</span>
+<span class="fc" id="L149">        this.tank = new Tank(tankImg,319,400);</span>
+        //set up invaders
+<span class="fc" id="L151">        this.invaderImg = loadImage(&quot;invader1.png&quot;);</span>
+<span class="fc" id="L152">        this.downImg = loadImage(&quot;invader2.png&quot;);</span>
+        //set up projectile
+<span class="fc" id="L154">        this.projectileImg = loadImage(&quot;projectile.png&quot;);</span>
+        //set up invaders
+<span class="fc" id="L156">        int invaderDefaultY = 50;</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">        for(int i = 0; i &lt; invadersPrint.length; i++){</span>
+<span class="fc" id="L158">            int invaderDefaultX = 180;</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            if(i == 0){</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">                for(int j = 0; j &lt; invadersPrint[0].length; j++){</span>
+<span class="fc" id="L161">                    Invader armouredInvader = new Invader(armouredInvaderRegImg,invaderDefaultX,invaderDefaultY,3);</span>
+<span class="fc" id="L162">                    invadersPrint[i][j] = armouredInvader;</span>
+<span class="fc" id="L163">                    invaderDefaultX += 35;</span>
+                }
+<span class="fc bfc" id="L165" title="All 2 branches covered.">            }else if(i == 1){</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">                for(int j = 0; j &lt; invadersPrint[0].length; j++){</span>
+<span class="fc" id="L167">                    Invader powerInvader = new Invader(powerInvaderRegImg,invaderDefaultX,invaderDefaultY,1);</span>
+<span class="fc" id="L168">                    invadersPrint[i][j] = powerInvader;</span>
+<span class="fc" id="L169">                    invaderDefaultX += 35;</span>
+                }
+            }else {
+<span class="fc bfc" id="L172" title="All 2 branches covered.">                for(int j = 0; j &lt; invadersPrint[0].length; j++){</span>
+<span class="fc" id="L173">                    Invader invader = new Invader(invaderImg,invaderDefaultX,invaderDefaultY,1);</span>
+<span class="fc" id="L174">                    invadersPrint[i][j] = invader;</span>
+<span class="fc" id="L175">                    invaderDefaultX += 35;</span>
+                }
+            }
+
+<span class="fc" id="L179">            invaderDefaultY += 20;</span>
+        }
+        //set up barriers
+
+<span class="fc" id="L183">    }</span>
+
+
+
+    @Override
+    public void keyPressed() {
+
+<span class="fc bfc" id="L190" title="All 2 branches covered.">            if(key == CODED ){</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">                if(keyCode == LEFT ){</span>
+<span class="fc" id="L192">                    isMovingLeft = true;</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">                }else if(keyCode == RIGHT ){</span>
+<span class="fc" id="L194">                    isMovingRight = true;</span>
+                }
+<span class="pc bpc" id="L196" title="1 of 4 branches missed.">            }else if (keyCode == ' ' &amp;&amp; !hasFired){</span>
+                //invoke the constructor to build one projectile object
+<span class="fc" id="L198">                projectile = tank.tankFire();</span>
+                //load the image
+<span class="fc" id="L200">                projectile.setProjectileImg(projectileImg);</span>
+<span class="fc" id="L201">                fires.add(projectile);</span>
+                //control fire only one projectile during pressing the button
+<span class="fc" id="L203">                image(projectileImg,projectile.getFireX(),projectile.getFireY());</span>
+<span class="fc" id="L204">                hasFired = true;</span>
+                //extend (super fire)
+<span class="pc bpc" id="L206" title="2 of 6 branches missed.">            }else if(key == 'f' &amp;&amp; !hasFired &amp;&amp; tank.getSuperAmount() &gt; 0){</span>
+                //same as the regular fire but use the superTankFire()
+<span class="fc" id="L208">                projectile = tank.superTankFIre();</span>
+<span class="fc" id="L209">                projectile.setProjectileImg(projectileLongImg);</span>
+<span class="fc" id="L210">                fires.add(projectile);</span>
+<span class="fc" id="L211">                image(projectileLongImg, projectile.getFireX(), projectile.getFireY());</span>
+<span class="fc" id="L212">                hasFired = true;</span>
+<span class="fc" id="L213">                tank.superFireRemains();</span>
+            }
+
+<span class="fc" id="L216">    }</span>
+
+    @Override
+    public void keyReleased() {
+        //if the user has released the keyboard, set the checking values to the default
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        if(key == CODED){</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">            if(keyCode == LEFT){</span>
+<span class="fc" id="L223">                isMovingLeft = false;</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">            }else if(keyCode == RIGHT){</span>
+<span class="fc" id="L225">                isMovingRight = false;</span>
+            }
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        }else if (keyCode == ' '){</span>
+<span class="fc" id="L228">            hasFired = false;</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">        }else if(key == 'f'){</span>
+<span class="fc" id="L230">            hasFired = false;</span>
+        }
+<span class="fc" id="L232">    }</span>
+
+    public void settings() {
+<span class="fc" id="L235">        size(640, 480);</span>
+<span class="fc" id="L236">    }</span>
+
+    protected void tick(){
+<span class="fc" id="L239">        death = 0;</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">        for(int i = 0; i &lt; invadersPrint.length ; i++){</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">            for(int j = 0; j&lt; invadersPrint[0].length; j++){</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">                if(invadersPrint[i][j].isHasBeenAttacked()){</span>
+                    //an invader is dead
+<span class="fc" id="L244">                    death++;</span>
+                }
+            }
+        }
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        if(death &gt;= 40){</span>
+<span class="fc" id="L249">            checkIfFinish = 1;//detect if the game enters next level</span>
+        }
+
+<span class="fc bfc" id="L252" title="All 2 branches covered.">        for(int i = 0; i&lt;invadersPrint.length; i++){</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">            for(int j = 0;j&lt; invadersPrint[0].length; j++){</span>
+                //check if the invader has touched the barriers
+<span class="pc bpc" id="L255" title="1 of 4 branches missed.">                if (invadersPrint[i][j].getInvaderY() &gt;= 318 &amp;&amp; !invadersPrint[i][j].isHasBeenAttacked()) {</span>
+<span class="fc" id="L256">                    checkIfFinish = 2;</span>
+<span class="fc" id="L257">                    break;</span>
+                }
+            }
+        }
+        //load a tank
+<span class="fc" id="L262">        image(tank.getPImage(),tank.getSetX(),tank.getSetY());</span>
+<span class="pc bpc" id="L263" title="1 of 4 branches missed.">        if(isMovingRight &amp;&amp; tank.getSetX()&lt;=460){</span>
+<span class="fc" id="L264">            tank.moveRight();</span>
+        }
+<span class="fc bfc" id="L266" title="All 4 branches covered.">        if(isMovingLeft &amp;&amp; tank.getSetX()&gt;=180){</span>
+<span class="fc" id="L267">            tank.moveLeft();</span>
+        }
+        //move the projectiles, depends on if it is friendly
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        for(Projectile p : fires){</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">            if(p.isItFriently()){</span>
+<span class="fc" id="L272">                p.ProjectileMove();</span>
+<span class="pc bpc" id="L273" title="1 of 2 branches missed.">            }else if(!p.isItFriently()){</span>
+<span class="fc" id="L274">                p.unfriendlyMove();</span>
+            }
+<span class="fc" id="L276">            image(p.getProjectileImg(),p.getFireX(),p.getFireY());</span>
+<span class="fc" id="L277">        }</span>
+        //draw barriers
+<span class="fc bfc" id="L279" title="All 2 branches covered.">        for(int i = 0; i&lt; barriers.length; i++){</span>
+<span class="fc bfc" id="L280" title="All 2 branches covered.">            for(int j = 0; j&lt; barriers[0].length; j++){</span>
+<span class="fc" id="L281">                image(barriers[i][j].getCurrentImg(),barriers[i][j].getBarrierX(),barriers[i][j].getBarrierY());</span>
+            }
+        }
+    //draw invaders
+        //set moving range
+<span class="fc" id="L286">        int moveLimit = 30;</span>
+        //set moving down range
+<span class="fc" id="L288">        int downLimit = 8;</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">        loopDraw: while(checkIfFinish == 0){</span>
+            //if does not move down
+<span class="fc bfc" id="L291" title="All 4 branches covered.">            if(invaderMove &amp;&amp; !invaderDown){</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">                for (int i = 0; i &lt; invadersPrint.length; i++) {</span>
+<span class="fc bfc" id="L293" title="All 2 branches covered.">                    for (int j = 0; j &lt; invadersPrint[0].length; j++) {</span>
+                        //move left
+<span class="pc bpc" id="L295" title="1 of 4 branches missed.">                        if(invaderLeft &amp;&amp; !invaderRight){</span>
+<span class="fc" id="L296">                            invadersPrint[i][j].invaderMoveLeft();</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">                            if(currentMove &gt;= moveLimit){</span>
+<span class="fc" id="L298">                                currentMove = 0;</span>
+<span class="fc" id="L299">                                invaderLeft = false;</span>
+<span class="fc" id="L300">                                invaderRight = true;</span>
+<span class="fc" id="L301">                                invaderDown = true;</span>
+<span class="fc" id="L302">                                break loopDraw;</span>
+                            }
+                        }
+                        //move right
+<span class="pc bpc" id="L306" title="1 of 4 branches missed.">                        if(!invaderLeft &amp;&amp; invaderRight){</span>
+<span class="fc" id="L307">                            invadersPrint[i][j].invaderMoveRight();</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">                            if(currentMove &gt;= moveLimit){</span>
+<span class="fc" id="L309">                                currentMove = 0;</span>
+<span class="fc" id="L310">                                invaderLeft = true;</span>
+<span class="fc" id="L311">                                invaderRight = false;</span>
+<span class="fc" id="L312">                                invaderDown = true;</span>
+<span class="fc" id="L313">                                break loopDraw;</span>
+                            }
+                        }
+                    }
+                }
+                //count moved steps
+<span class="fc" id="L319">                currentMove++;</span>
+<span class="fc" id="L320">                invaderMove = false;</span>
+<span class="fc" id="L321">                break;</span>
+            }
+            //move down
+<span class="fc bfc" id="L324" title="All 2 branches covered.">            if(invaderMove){</span>
+<span class="fc bfc" id="L325" title="All 2 branches covered.">                if(currentMove &lt;= downLimit){</span>
+<span class="fc bfc" id="L326" title="All 2 branches covered.">                    for(int m = 0; m &lt; invadersPrint.length; m++){</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">                        if(m == 0){</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">                            for(int n = 0; n &lt; invadersPrint[0].length; n++){</span>
+<span class="fc" id="L329">                                invadersPrint[m][n].invaderMoveDown();</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">                                if(!invadersPrint[m][n].isHasBeenAttacked()){</span>
+<span class="fc" id="L331">                                    invadersPrint[m][n].changeSit(armouredInvaderDownImg);</span>
+                                }
+                            }
+<span class="fc bfc" id="L334" title="All 2 branches covered.">                        }else if(m == 1){</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">                            for(int n = 0; n &lt; invadersPrint[0].length; n++){</span>
+<span class="fc" id="L336">                                invadersPrint[m][n].invaderMoveDown();</span>
+<span class="fc bfc" id="L337" title="All 2 branches covered.">                                if(!invadersPrint[m][n].isHasBeenAttacked()){</span>
+<span class="fc" id="L338">                                    invadersPrint[m][n].changeSit(powerInvaderDownImg);</span>
+                                }
+                            }
+                        }else {
+<span class="fc bfc" id="L342" title="All 2 branches covered.">                            for(int n = 0; n &lt; invadersPrint[0].length; n++){</span>
+<span class="fc" id="L343">                                invadersPrint[m][n].invaderMoveDown();</span>
+<span class="fc bfc" id="L344" title="All 2 branches covered.">                                if(!invadersPrint[m][n].isHasBeenAttacked()){</span>
+<span class="fc" id="L345">                                    invadersPrint[m][n].changeSit(downImg);</span>
+                                }
+                            }
+                        }
+
+
+                    }
+<span class="fc" id="L352">                    currentMove++;</span>
+<span class="fc" id="L353">                    invaderMove = false;</span>
+<span class="fc" id="L354">                    break;</span>
+                }else{
+<span class="fc" id="L356">                    currentMove = 0;</span>
+<span class="fc" id="L357">                    invaderDown = false;</span>
+<span class="fc" id="L358">                    invaderMove = false;</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">                    for(int m = 0; m &lt; invadersPrint.length; m++){</span>
+<span class="fc bfc" id="L360" title="All 2 branches covered.">                        if(m == 0){</span>
+<span class="fc bfc" id="L361" title="All 2 branches covered.">                            for(int n = 0; n &lt; invadersPrint[0].length; n++){</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">                                if(!invadersPrint[m][n].isHasBeenAttacked()){</span>
+<span class="fc" id="L363">                                    invadersPrint[m][n].changeSit(armouredInvaderRegImg);</span>
+                                }
+                            }
+<span class="fc bfc" id="L366" title="All 2 branches covered.">                        }else if(m == 1){</span>
+<span class="fc bfc" id="L367" title="All 2 branches covered.">                            for(int n = 0; n &lt; invadersPrint[0].length; n++){</span>
+<span class="fc bfc" id="L368" title="All 2 branches covered.">                                if(!invadersPrint[m][n].isHasBeenAttacked()){</span>
+<span class="fc" id="L369">                                    invadersPrint[m][n].changeSit(powerInvaderRegImg);</span>
+                                }
+                            }
+                        }else {
+<span class="fc bfc" id="L373" title="All 2 branches covered.">                            for(int n = 0; n &lt; invadersPrint[0].length; n++){</span>
+<span class="fc bfc" id="L374" title="All 2 branches covered.">                                if(!invadersPrint[m][n].isHasBeenAttacked()){</span>
+<span class="fc" id="L375">                                    invadersPrint[m][n].changeSit(invaderImg);</span>
+                                }
+                            }
+                        }
+
+                    }
+<span class="fc" id="L381">                    break;</span>
+                }
+            }
+<span class="fc" id="L384">            invaderMove = true;</span>
+            break;
+        }
+<span class="fc" id="L387">        boolean foundAliveFired = true;</span>
+        //invader fire
+<span class="fc bfc" id="L389" title="All 2 branches covered.">        if(drawTime % fireRate == 0){</span>
+<span class="fc bfc" id="L390" title="All 2 branches covered.">            while(foundAliveFired){</span>
+                //choose an alive invader
+<span class="fc" id="L392">                int randX = parseInt(random(0,3));</span>
+<span class="fc" id="L393">                int randY = parseInt(random(0,9));</span>
+<span class="fc bfc" id="L394" title="All 2 branches covered.">                if(!invadersPrint[randX][randY].isHasBeenAttacked()){</span>
+<span class="fc bfc" id="L395" title="All 2 branches covered.">                    if(randX != 1){</span>
+                        //regular fire
+<span class="fc" id="L397">                        Projectile invaderFire = invadersPrint[randX][randY].invaderFire();</span>
+<span class="fc" id="L398">                        invaderFire.setProjectileImg(projectileImg);</span>
+<span class="fc" id="L399">                        fires.add(invaderFire);</span>
+                        //draw unfriendly projectile
+<span class="fc" id="L401">                        image(projectileImg,invaderFire.getFireX(),invaderFire.getFireY());</span>
+<span class="fc" id="L402">                    }</span>
+                    else{
+                        //powerful fire
+<span class="fc" id="L405">                        Projectile powerFire = invadersPrint[randX][randY].powerFire();</span>
+<span class="fc" id="L406">                        powerFire.setProjectileImg(projectileLongImg);</span>
+<span class="fc" id="L407">                        fires.add((powerFire));</span>
+<span class="fc" id="L408">                        image(projectileLongImg,powerFire.getFireX(),powerFire.getFireY());</span>
+                    }
+<span class="fc" id="L410">                    foundAliveFired = false;</span>
+                }
+<span class="fc" id="L412">            }</span>
+
+        }
+        //fire checking(invader)
+<span class="fc bfc" id="L416" title="All 2 branches covered.">        for(int i = 0; i &lt; invadersPrint.length ; i++){</span>
+<span class="fc bfc" id="L417" title="All 2 branches covered.">            for(int j = 0; j&lt; invadersPrint[0].length; j++){</span>
+<span class="fc bfc" id="L418" title="All 2 branches covered.">                for(int k = 0; k &lt; fires.size() ; k++){</span>
+<span class="fc bfc" id="L419" title="All 2 branches covered.">                    if(!invadersPrint[i][j].isHasBeenAttacked()){</span>
+<span class="fc bfc" id="L420" title="All 2 branches covered.">                        if(hitCheck(fires.get(k),invadersPrint[i][j])){</span>
+<span class="fc" id="L421">                            invadersPrint[i][j].invaderBlood();</span>
+<span class="fc bfc" id="L422" title="All 2 branches covered.">                            if(fires.get(k).checkIfRegular()){</span>
+<span class="fc" id="L423">                                fires.remove(fires.get(k));</span>
+<span class="fc" id="L424">                                k--;</span>
+                            }
+<span class="fc bfc" id="L426" title="All 2 branches covered.">                            if(invadersPrint[i][j].checkHP() &lt;= 0){</span>
+<span class="fc" id="L427">                                invadersPrint[i][j].invaderAttacked();</span>
+<span class="fc" id="L428">                                invadersPrint[i][j].changeSit(empty);</span>
+<span class="fc bfc" id="L429" title="All 4 branches covered.">                                if(i == 0 || i == 1){</span>
+<span class="fc" id="L430">                                    currentScore += 250;</span>
+                                }else{
+<span class="fc" id="L432">                                    currentScore += 100;</span>
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //fire checking(barrier)
+<span class="fc bfc" id="L441" title="All 2 branches covered.">        for(int i = 0; i &lt; barriers.length; i++){</span>
+<span class="fc bfc" id="L442" title="All 2 branches covered.">            for(int j = 0; j&lt; barriers[0].length; j++){</span>
+<span class="fc bfc" id="L443" title="All 2 branches covered.">                for(int k = 0; k &lt; fires.size(); k++){</span>
+<span class="fc bfc" id="L444" title="All 2 branches covered.">                    if(barriers[i][j].useful()){</span>
+<span class="fc bfc" id="L445" title="All 2 branches covered.">                        if(fires.get(k).checkIfRegular()){</span>
+<span class="fc bfc" id="L446" title="All 2 branches covered.">                            if(barrierCheck(fires.get(k),barriers[i][j])){</span>
+<span class="fc" id="L447">                                fires.remove(fires.get(k));</span>
+<span class="fc" id="L448">                                k--;</span>
+<span class="fc" id="L449">                                barriers[i][j].beAttacked();</span>
+                            }
+<span class="pc bpc" id="L451" title="1 of 2 branches missed.">                        }else if(!fires.get(k).checkIfRegular()){</span>
+<span class="fc bfc" id="L452" title="All 2 branches covered.">                            if(barrierCheck(fires.get(k),barriers[i][j])){</span>
+<span class="fc" id="L453">                                fires.remove(fires.get(k));</span>
+<span class="fc" id="L454">                                k--;</span>
+<span class="fc" id="L455">                                barriers[i][j].PowerAttacked();</span>
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        //fire checking(tank)
+<span class="fc bfc" id="L464" title="All 2 branches covered.">        for(int i = 0;i &lt;fires.size(); i++){</span>
+<span class="fc bfc" id="L465" title="All 2 branches covered.">            if(underAttack(fires.get(i),tank)){</span>
+<span class="fc bfc" id="L466" title="All 2 branches covered.">                if(fires.get(i).checkIfRegular()){</span>
+<span class="fc" id="L467">                    tank.tankBlood();</span>
+<span class="pc bpc" id="L468" title="1 of 2 branches missed.">                }else if (!fires.get(i).checkIfRegular()){</span>
+<span class="fc" id="L469">                    tank.tankDead();</span>
+                }
+<span class="fc" id="L471">                fires.remove(fires.get(i));</span>
+<span class="fc" id="L472">                i--;</span>
+<span class="fc bfc" id="L473" title="All 2 branches covered.">                if(tank.getHP() &lt;= 0){</span>
+<span class="fc" id="L474">                    checkIfFinish = 2;</span>
+                }
+            }
+        }
+        //refresh the invaders every frame
+<span class="fc bfc" id="L479" title="All 2 branches covered.">        for (Invader[] invaders : invadersPrint) {</span>
+<span class="fc bfc" id="L480" title="All 2 branches covered.">            for (int j = 0; j &lt; invadersPrint[0].length; j++) {</span>
+<span class="fc" id="L481">                image(invaders[j].getInvaderImg(), invaders[j].getInvaderX(), invaders[j].getInvaderY());</span>
+            }
+        }
+<span class="fc" id="L484">    }</span>
+    //shot down invader
+    protected boolean hitCheck(Projectile projectile,Invader invader){
+<span class="fc bfc" id="L487" title="All 2 branches covered.">        return (projectile.getFireX() &lt; (invader.getInvaderX() + 16))</span>
+<span class="fc bfc" id="L488" title="All 2 branches covered.">                &amp;&amp; ((projectile.getFireX() + 16) &gt; invader.getInvaderX())</span>
+<span class="fc bfc" id="L489" title="All 2 branches covered.">                &amp;&amp; (projectile.getFireY() &lt; (invader.getInvaderY() + 16))</span>
+<span class="fc bfc" id="L490" title="All 2 branches covered.">                &amp;&amp; ((16 + projectile.getFireY()) &gt; (invader.getInvaderY()))</span>
+<span class="fc bfc" id="L491" title="All 2 branches covered.">                &amp;&amp; (projectile.isItFriently());</span>
+    }
+    //destroy barriers
+    protected boolean barrierCheck(Projectile projectile,Barrier barrier){
+<span class="fc bfc" id="L495" title="All 2 branches covered.">        if(projectile.checkIfRegular()){</span>
+<span class="fc bfc" id="L496" title="All 2 branches covered.">            return (projectile.getFireX() &lt; (barrier.getBarrierX() + 8))</span>
+<span class="fc bfc" id="L497" title="All 2 branches covered.">                    &amp;&amp; ((projectile.getFireX() + 1) &gt; barrier.getBarrierX())</span>
+<span class="fc bfc" id="L498" title="All 2 branches covered.">                    &amp;&amp; (projectile.getFireY() &lt; (barrier.getBarrierY() + 8))</span>
+<span class="fc bfc" id="L499" title="All 2 branches covered.">                    &amp;&amp; ((3 + projectile.getFireY()) &gt; (barrier.getBarrierY()));</span>
+        }else{
+<span class="fc bfc" id="L501" title="All 2 branches covered.">            return (projectile.getFireX() &lt; (barrier.getBarrierX() + 8))</span>
+<span class="fc bfc" id="L502" title="All 2 branches covered.">                    &amp;&amp; ((projectile.getFireX() + 2) &gt; barrier.getBarrierX())</span>
+<span class="fc bfc" id="L503" title="All 2 branches covered.">                    &amp;&amp; (projectile.getFireY() &lt; (barrier.getBarrierY() + 8))</span>
+<span class="fc bfc" id="L504" title="All 2 branches covered.">                    &amp;&amp; ((5 + projectile.getFireY()) &gt; (barrier.getBarrierY()));</span>
+        }
+    }
+    //tank under attacking
+    protected boolean underAttack(Projectile projectile,Tank tank){
+<span class="fc bfc" id="L509" title="All 2 branches covered.">        if(projectile.checkIfRegular()){</span>
+<span class="fc bfc" id="L510" title="All 2 branches covered.">            return (projectile.getFireX() &lt; (tank.getSetX() + 22))</span>
+<span class="fc bfc" id="L511" title="All 2 branches covered.">                    &amp;&amp; ((projectile.getFireX() + 1) &gt; tank.getSetX())</span>
+<span class="pc bpc" id="L512" title="1 of 2 branches missed.">                    &amp;&amp; (projectile.getFireY() &lt; (tank.getSetY() + 16))</span>
+<span class="fc bfc" id="L513" title="All 2 branches covered.">                    &amp;&amp; ((3 + projectile.getFireY()) &gt; (tank.getSetY()))</span>
+<span class="pc bpc" id="L514" title="1 of 2 branches missed.">                    &amp;&amp; (!projectile.isItFriently());</span>
+        }else{
+<span class="fc bfc" id="L516" title="All 2 branches covered.">            return (projectile.getFireX() &lt; (tank.getSetX() + 22))</span>
+<span class="fc bfc" id="L517" title="All 2 branches covered.">                    &amp;&amp; ((projectile.getFireX() + 2) &gt; tank.getSetX())</span>
+<span class="pc bpc" id="L518" title="1 of 2 branches missed.">                    &amp;&amp; (projectile.getFireY() &lt; (tank.getSetY() + 16))</span>
+<span class="fc bfc" id="L519" title="All 2 branches covered.">                    &amp;&amp; ((5 + projectile.getFireY()) &gt; (tank.getSetY()))</span>
+<span class="pc bpc" id="L520" title="1 of 2 branches missed.">                    &amp;&amp; (!projectile.isItFriently());</span>
+
+        }
+
+    }
+
+    protected void refreshAll(){
+        //clear the current remaining barriers
+<span class="fc" id="L528">        fires.clear();</span>
+        //return HP
+<span class="fc" id="L530">        tank.newLevelTank();</span>
+        //set up new barriers(full)
+<span class="fc bfc" id="L532" title="All 2 branches covered.">        for(int i = 0; i&lt; barriers.length; i++){</span>
+<span class="fc bfc" id="L533" title="All 2 branches covered.">            for(int j = 0; j&lt; barriers[0].length; j++){</span>
+<span class="fc" id="L534">                barriers[i][j].refreshBarriers();</span>
+            }
+        }
+        //clear the list of barriers images
+<span class="fc" id="L538">        barrierSolid.clear();</span>
+<span class="fc" id="L539">        barrierLeft.clear();</span>
+<span class="fc" id="L540">        barrierTop.clear();</span>
+<span class="fc" id="L541">        barrierRight.clear();</span>
+        //increase the fire rate
+<span class="fc bfc" id="L543" title="All 2 branches covered.">        if(fireRate &gt; 60){</span>
+<span class="fc" id="L544">            fireRate -= 60;</span>
+        }
+<span class="fc" id="L546">        newLevel = true;</span>
+<span class="fc" id="L547">    }</span>
+    //delay the NEXT LEVEL image
+    public void printScreen(){
+<span class="fc bfc" id="L550" title="All 2 branches covered.">        if(newLevel){</span>
+<span class="fc" id="L551">            delay(2000);</span>
+<span class="fc" id="L552">            newLevel = false;</span>
+        }
+<span class="fc" id="L554">    }</span>
+    public void updateHighestScore(){
+        //update the highest score then set the current score to 0
+<span class="fc bfc" id="L557" title="All 2 branches covered.">        if(currentScore &gt; defaultScore){</span>
+<span class="fc" id="L558">            defaultScore = currentScore;</span>
+        }
+<span class="fc" id="L560">        currentScore = 0;</span>
+<span class="fc" id="L561">    }</span>
+
+
+
+    public void draw() { 
+        //Main Game Loop
+<span class="fc" id="L567">        background(background);</span>
+        //how games over
+<span class="fc bfc" id="L569" title="All 2 branches covered.">        if(checkIfFinish == 0) {</span>
+<span class="fc" id="L570">            printScreen();</span>
+<span class="fc" id="L571">            tick();</span>
+<span class="fc" id="L572">            text(&quot;LEVEL:&quot; + currentLevel + &quot;\nHP:&quot;+tank.getHP(),5,20);</span>
+<span class="fc" id="L573">            text(&quot;CURRENT SCORE:\n&quot; + currentScore,5,45);</span>
+<span class="fc" id="L574">            text(&quot;HIGH SCORE:\n    &quot; + defaultScore,530,20);</span>
+<span class="fc" id="L575">            text(&quot;SUPER PROJECTILE: &quot;+ tank.getSuperAmount(),200,20);</span>
+<span class="fc" id="L576">            text(&quot;PRESS F TO FILE A SUPER PROJECTILE&quot;, 170,35);</span>
+<span class="fc" id="L577">            drawTime++;</span>
+<span class="fc bfc" id="L578" title="All 2 branches covered.">        }else if(checkIfFinish == 1){</span>
+<span class="fc" id="L579">            image(nextLevel,264,227);</span>
+<span class="fc" id="L580">            refreshAll();</span>
+<span class="fc" id="L581">            setup();</span>
+            //reset the game , enter the next level
+<span class="fc" id="L583">            checkIfFinish = 0;</span>
+<span class="pc bpc" id="L584" title="1 of 2 branches missed.">            if(currentLevel &lt;= 5){</span>
+<span class="fc" id="L585">                currentLevel++;</span>
+            }
+        }else{
+<span class="fc" id="L588">            updateHighestScore();</span>
+<span class="fc" id="L589">            image(gameOver,264,232);</span>
+<span class="fc" id="L590">            refreshAll();</span>
+<span class="fc" id="L591">            setup();</span>
+<span class="fc" id="L592">            fireRate = 300;</span>
+            //reset the game
+<span class="fc" id="L594">            checkIfFinish = 0;</span>
+<span class="fc" id="L595">            currentLevel = 1;</span>
+
+        }
+<span class="fc" id="L598">    }</span>
+
+    public static void main(String[] args) {
+
+<span class="nc" id="L602">        PApplet.main(&quot;invadem.App&quot;);</span>
+<span class="nc" id="L603">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

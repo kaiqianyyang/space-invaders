@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Barrier.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">asm2</a> &gt; <a href="index.source.html" class="el_package">invadem</a> &gt; <span class="el_source">Barrier.java</span></div><h1>Barrier.java</h1><pre class="source lang-java linenums">package invadem;
+
+import processing.core.PApplet;
+import processing.core.PImage;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Barrier {
+
+    private List&lt;PImage&gt; situation;
+<span class="fc" id="L11">    private boolean isUseful = true;</span>
+    private int barrierX;
+    private int barrierY;
+    private PImage currentImg;
+
+<span class="fc" id="L16">    public Barrier(List&lt;PImage&gt; situation ,int barrierX, int barrierY){</span>
+<span class="fc" id="L17">        this.barrierY = barrierY;</span>
+<span class="fc" id="L18">        this.barrierX = barrierX;</span>
+<span class="fc" id="L19">        this.situation = new ArrayList&lt;&gt;(situation);</span>
+<span class="fc" id="L20">        this.currentImg = situation.get(0);</span>
+<span class="fc" id="L21">    }</span>
+
+    public int getBarrierX(){
+<span class="fc" id="L24">        return barrierX;</span>
+    }
+
+    public int getBarrierY(){
+<span class="fc" id="L28">        return barrierY;</span>
+    }
+
+    public boolean useful(){
+<span class="fc" id="L32">        return this.isUseful;</span>
+    }
+
+
+    public void beAttacked(){
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if(this.situation.size() &gt; 1){</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">            if(this.situation.size() == 2){</span>
+<span class="fc" id="L39">                this.isUseful = false;</span>
+            }
+<span class="fc" id="L41">            this.situation.remove(0);</span>
+<span class="fc" id="L42">            this.currentImg = this.situation.get(0);</span>
+        }
+<span class="fc" id="L44">    }</span>
+
+    public void PowerAttacked(){
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        while(this.situation.size() &gt; 1){</span>
+<span class="fc" id="L48">            this.beAttacked();</span>
+        }
+<span class="fc" id="L50">    }</span>
+
+    public void refreshBarriers(){
+<span class="fc" id="L53">        this.situation.clear();</span>
+<span class="fc" id="L54">        this.isUseful = true;</span>
+<span class="fc" id="L55">    }</span>
+
+    public PImage getCurrentImg() {
+<span class="fc" id="L58">        return currentImg;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

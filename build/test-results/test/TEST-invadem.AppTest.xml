@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="invadem.AppTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2019-11-12T05:26:19" hostname="192-168-1-125.tpgi.com.au" time="55.583">
+  <properties/>
+  <testcase name="testGameOver" classname="invadem.AppTest" time="5.608"/>
+  <testcase name="testPrintScreen" classname="invadem.AppTest" time="4.19"/>
+  <testcase name="testInvaderUnderAttack" classname="invadem.AppTest" time="4.162"/>
+  <testcase name="tankMoves" classname="invadem.AppTest" time="4.19"/>
+  <testcase name="invadersMove" classname="invadem.AppTest" time="4.166"/>
+  <testcase name="setUpTest" classname="invadem.AppTest" time="4.143"/>
+  <testcase name="testDestroyedInvader" classname="invadem.AppTest" time="5.061"/>
+  <testcase name="testTankUnderAttack" classname="invadem.AppTest" time="6.592"/>
+  <testcase name="testKeyboard" classname="invadem.AppTest" time="7.622"/>
+  <testcase name="testKeyboardFire" classname="invadem.AppTest" time="9.846"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

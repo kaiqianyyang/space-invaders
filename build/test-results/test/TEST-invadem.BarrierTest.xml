@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="invadem.BarrierTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2019-11-12T05:27:15" hostname="192-168-1-125.tpgi.com.au" time="0.001">
+  <properties/>
+  <testcase name="testBarrierUseful" classname="invadem.BarrierTest" time="0.0"/>
+  <testcase name="testRefreshBarriers" classname="invadem.BarrierTest" time="0.0"/>
+  <testcase name="testBarrierPowerAttacked" classname="invadem.BarrierTest" time="0.0"/>
+  <testcase name="testBarrierNotDestroyed" classname="invadem.BarrierTest" time="0.0"/>
+  <testcase name="testBarrierConstruction" classname="invadem.BarrierTest" time="0.0"/>
+  <testcase name="testBarrierPosition" classname="invadem.BarrierTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

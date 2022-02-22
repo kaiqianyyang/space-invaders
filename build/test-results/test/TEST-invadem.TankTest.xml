@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="invadem.TankTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2019-11-12T05:27:15" hostname="192-168-1-125.tpgi.com.au" time="0.001">
+  <properties/>
+  <testcase name="testTankGetImage" classname="invadem.TankTest" time="0.0"/>
+  <testcase name="testDead" classname="invadem.TankTest" time="0.0"/>
+  <testcase name="testTankSuperFire" classname="invadem.TankTest" time="0.0"/>
+  <testcase name="testTankProjectile" classname="invadem.TankTest" time="0.0"/>
+  <testcase name="testTankSetY" classname="invadem.TankTest" time="0.0"/>
+  <testcase name="testTankMoveLeft" classname="invadem.TankTest" time="0.0"/>
+  <testcase name="testTankBlood" classname="invadem.TankTest" time="0.0"/>
+  <testcase name="testTankMoveRight" classname="invadem.TankTest" time="0.0"/>
+  <testcase name="testTankConstruction" classname="invadem.TankTest" time="0.0"/>
+  <testcase name="testTankNewLevel" classname="invadem.TankTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
